@@ -38,5 +38,21 @@ Make sure again that you have run `npm install`. Then do the following:
 ...
 ```
 
+### Run it every hour
+You can configure a cron task to make the script run every hour.
+For example:
+
+```
+> crontab -e
+```
+
+Then in the editor, add a line:
+
+```
+25 * * * * node $HOME/bitcoin-tracker/index.js >> $HOME/logs/`date +'\%Y-\%b-\%d'`.log 2>&1
+```
+
+The above script would create a file every day containing all the logs of the day.
+
 ## Author
 Jason Yu
