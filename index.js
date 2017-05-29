@@ -58,6 +58,7 @@ function showJson(sales){
 
 function _parseSale(sale){
   return {
+    timestamp: new Date().toString(),
     seller: sale.profile.name,
     price: sale.temp_price,
   };
