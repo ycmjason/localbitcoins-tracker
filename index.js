@@ -22,20 +22,21 @@ var btc_amount = roundTo(AMOUNT / BUY_IN_RATE, 8);
 var promise = fetch('https://localbitcoins.com/sell-bitcoins-online/GBP/.json')
   .then(res => res.json())
   .then(res => res.data)
-  .then(data => _uniqWith(data.ad_list.map(ad => ad.data).map(_parseSale), _isEqual))
+  .then(data => data.ad_list.map(ad => ad.data))
+  .then(data => _uniqWith(data.map(_parseSale), _isEqual))
   .then(show);
 
 function show(sales){
   var table = new Table({
-    head: ['Name', 'Price (GBP/BTC)', 'How much you get (GBP)', 'How much you earn (GBP)'],
+    head: ['#', 'Name', 'Price (GBP/BTC)', 'How much you get (GBP)', 'How much you earn (GBP)'],
     style: {head: ['bold']}
   });
   sales = sales.slice(0, NUMBER_OF_ROWS);
-  sales.map(sale => {
+  sales.map((sale, i) => {
     var gbp_get = sale.price * btc_amount;
     var gbp_earn = gbp_get - AMOUNT;
     gbp_earn = colors[(gbp_earn > 0)? 'green': 'red'](gbp_earn);
-    table.push([sale.seller, sale.price, gbp_get, gbp_earn]);
+    table.push([i + 1, sale.seller, sale.price, gbp_get, gbp_earn]);
   });
   console.log(table.toString());
 }
