@@ -10,6 +10,7 @@ var _isEqual = require('lodash.isequal');
 var Table = require('cli-table');
 var colors = require('colors');
 
+const NUMBER_OF_ROWS = 10 || process.argv[2];
 
 const roundTo = (x, p) => {
   var factor = Math.pow(10, p)
@@ -29,6 +30,7 @@ function show(sales){
     head: ['Name', 'Price (GBP/BTC)', 'How much you get (GBP)', 'How much you earn (GBP)'],
     style: {head: ['bold']}
   });
+  sales = sales.slice(0, NUMBER_OF_ROWS);
   sales.map(sale => {
     var gbp_get = sale.price * btc_amount;
     var gbp_earn = gbp_get - AMOUNT;
