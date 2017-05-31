@@ -5,7 +5,7 @@ const AMOUNT = 50;  // GBP
 //
 //
 const NUMBER_OF_ROWS = process.argv[2] || 10;
-const output = process.argv[3] || "table";
+const OUTPUT = process.argv[3] || ["json", "table", "log"][1];
 const ONLINE_PROVIDER = ['NATIONAL_BANK', 'PAYPAL', 'GIFT_CARD_CODE_AMAZON', 'CASH_BY_MAIL', 'CASH_DEPOSIT'][0];
 
 var fetch = require('node-fetch');
@@ -32,7 +32,23 @@ var promise = fetch('https://localbitcoins.com/sell-bitcoins-online/GBP/.json')
   .then(analyseSales)
   .then(sales => sales.slice(0, NUMBER_OF_ROWS))
   .then(sales => sales.map((sale, i) => Object.assign({id: i + 1}, sale)))
-  .then((output === "json")? showJson: showTable);
+  .then((sales) => {
+    var show;
+    switch(OUTPUT){
+      case "json":
+        show = showJson;
+        break;
+      case "log":
+      case "logs":
+        show = showLog;
+        break;
+      case "table":
+      default:
+        show = showTable;
+        break;
+    }
+    show(sales);
+  });
 
 function analyseSales(sales){
   return sales.map(sale => {
@@ -49,7 +65,7 @@ function showTable(sales){
     head: ['#', 'Name', 'Price (GBP/BTC)', 'How much you get (GBP)', 'How much you earn (GBP)'],
     style: {head: ['bold']}
   });
-  sales.map((sale) => {
+  sales.forEach((sale) => {
     var color = (x) => colors[(sale.net > 0)? 'green': 'red'](x);
     table.push([
       sale.id,
@@ -66,9 +82,22 @@ function showJson(sales){
   console.log(JSON.stringify(sales, null, 4));
 }
 
+function showLog(sales){
+  sales.forEach((sale) =>{
+    console.log([
+      sale.id,
+      sale.timestamp.toJSON(),
+      `'${sale.seller}'`,
+      sale.price,
+      sale.gross,
+      sale.net
+    ].join(':'));
+  });
+}
+
 function _parseSale(sale){
   return {
-    timestamp: new Date().toString(),
+    timestamp: new Date(),
     seller: sale.profile.name,
     price: sale.temp_price,
   };
