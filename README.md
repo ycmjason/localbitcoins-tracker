@@ -74,6 +74,12 @@ It might be useful tho if there is JSON format output for further analysis.
     ... 10 records in total ...
 ```
 
+Or you could do
+
+```bash
+> npm run 10 log
+```
+
 
 ### Run it every hour
 You can configure a cron task to make the script run every hour.
